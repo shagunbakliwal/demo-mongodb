@@ -30,4 +30,4 @@ db.createUser(
 )
 
 #Connect and authenticate as tester1.
-mongo --port 27017 -u "myTester" -p "xyz123" --authenticationDatabase "test"
+mongo --port 27017 -u <user> -p <password> --authenticationDatabase <db>
