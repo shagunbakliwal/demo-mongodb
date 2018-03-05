@@ -15,8 +15,8 @@ public class CustomerService {
 	@Autowired
 	CustomerRepository customerRepository;
 
-	public void add(Customer customer) {
-		customerRepository.save(customer);
+	public Customer add(Customer customer) {
+		return customerRepository.save(customer);
 	}
 
 	public List<Customer> get() {

@@ -3,12 +3,12 @@ Setup MongoDB
 mongod --port <port> --dbpath <path>
 mongo --port <port>
 
-use admin
+use test
 db.createUser(
   {
     user: "user",
     pwd: "password",
-    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+    roles: [ { role: "userAdminAnyDatabase", db: "test" } ]
   }
 )
 
@@ -24,8 +24,7 @@ db.createUser(
   {
     user: "tester1",
     pwd: "password",
-    roles: [ { role: "readWrite", db: "products" },
-             { role: "read", db: "customers" } ]
+    roles: [ { role: "readWrite", db: "customer" } ]
   }
 )
 
