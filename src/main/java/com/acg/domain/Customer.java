@@ -1,7 +1,8 @@
-package com.example.demo.domain;
+package com.acg.domain;
 
 import java.math.BigInteger;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.gson.Gson;
@@ -11,23 +12,20 @@ public class Customer {
 	private BigInteger id;
 	private String firstName;
 	private String lastName;
-
-	public Customer(String firstName, String lastName) {
-		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-
-	public Customer(BigInteger id, String firstName, String lastName) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
+	@Indexed(unique = true)
+	private String emailId;
 
 	public Customer() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public Customer(BigInteger id, String firstName, String lastName, String emailId) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailId = emailId;
 	}
 
 	public BigInteger getId() {
@@ -52,6 +50,14 @@ public class Customer {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
 	}
 
 	@Override
