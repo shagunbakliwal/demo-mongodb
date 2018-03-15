@@ -10,12 +10,6 @@ public class CustomerException extends Exception {
 
 	}
 
-	public CustomerException(int errorCode, String message) {
-		super(message);
-		this.errorCode = errorCode;
-		this.message = message;
-	}
-
 	public CustomerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
@@ -29,6 +23,16 @@ public class CustomerException extends Exception {
 	public CustomerException(String message) {
 		super(message);
 		this.message = message;
+	}
+
+	public CustomerException(int errorCode, Throwable cause, String message) {
+		super(message, cause, false, false);
+		this.errorCode = errorCode;
+		this.message = message;
+	}
+
+	public CustomerException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 	public int getErrorCode() {

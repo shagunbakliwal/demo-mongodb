@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.acg.constants.Constants;
+import com.acg.config.Configuration;
+import com.acg.constants.ErrorCodes;
 import com.acg.domain.Customer;
 import com.acg.exception.CustomerException;
 import com.acg.repository.CustomerRepository;
@@ -19,14 +20,16 @@ public class CustomerService {
 	Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
 	@Autowired
+	Configuration configuration;
+	@Autowired
 	CustomerRepository customerRepository;
 
 	public Customer add(Customer customer) throws CustomerException {
 		try {
 			return customerRepository.save(customer);
 		} catch (org.springframework.dao.DuplicateKeyException e) {
-			throw new CustomerException(Constants.EMAIL_DUPLICATION.getErrorCode(),
-					Constants.EMAIL_DUPLICATION.getValue());
+			throw new CustomerException(configuration.serverPort + ErrorCodes.EMAIL_DUPLICATION.getErrorCode(),
+					e.getCause(), ErrorCodes.EMAIL_DUPLICATION.getValue());
 		}
 
 	}
@@ -35,9 +38,8 @@ public class CustomerService {
 		try {
 			return Lists.newArrayList(customerRepository.findAll());
 		} catch (Exception e) {
-			throw new CustomerException(e.getMessage());
+			throw new CustomerException(configuration.serverPort + ErrorCodes.GENERIC_EXCEPTION.getErrorCode(), e.getCause(),
+					ErrorCodes.GENERIC_EXCEPTION.getValue());
 		}
-
 	}
-
 }

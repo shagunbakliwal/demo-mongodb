@@ -2,6 +2,10 @@ package com.acg.domain;
 
 import java.math.BigInteger;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Null;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,10 +13,14 @@ import com.google.gson.Gson;
 
 @Document(collection = "customer")
 public class Customer {
+	@Null
 	private BigInteger id;
+	@NotEmpty
 	private String firstName;
+	@NotEmpty
 	private String lastName;
 	@Indexed(unique = true)
+	@Email
 	private String emailId;
 
 	public Customer() {
