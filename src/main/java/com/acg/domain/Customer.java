@@ -9,11 +9,13 @@ import javax.validation.constraints.Null;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 
 @Document(collection = "customer")
 public class Customer {
 	@Null
+	@JsonIgnore
 	private BigInteger id;
 	@NotEmpty
 	private String firstName;

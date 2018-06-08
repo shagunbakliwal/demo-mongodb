@@ -9,6 +9,7 @@ public final class Configuration {
 	@Value("${server.port}")
 	public int serverPort;
 
+
 	private Configuration() {
 		// TODO Auto-generated constructor stub
 	}

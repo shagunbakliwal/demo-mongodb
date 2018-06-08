@@ -26,8 +26,9 @@ public class CustomerService {
 
 	public Customer add(Customer customer) throws CustomerException {
 		try {
-			return customerRepository.save(customer);
+			return customerRepository.insert(customer);
 		} catch (org.springframework.dao.DuplicateKeyException e) {
+			logger.error(e.getMessage(), e);
 			throw new CustomerException(configuration.serverPort + ErrorCodes.EMAIL_DUPLICATION.getErrorCode(),
 					e.getCause(), ErrorCodes.EMAIL_DUPLICATION.getValue());
 		}
@@ -38,8 +39,20 @@ public class CustomerService {
 		try {
 			return Lists.newArrayList(customerRepository.findAll());
 		} catch (Exception e) {
-			throw new CustomerException(configuration.serverPort + ErrorCodes.GENERIC_EXCEPTION.getErrorCode(), e.getCause(),
-					ErrorCodes.GENERIC_EXCEPTION.getValue());
+			logger.error(e.getMessage(), e);
+			throw new CustomerException(configuration.serverPort + ErrorCodes.GENERIC_EXCEPTION.getErrorCode(),
+					e.getCause(), ErrorCodes.GENERIC_EXCEPTION.getValue());
+		}
+	}
+
+	public boolean delete() throws CustomerException {
+		try {
+			customerRepository.deleteAll();
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new CustomerException(configuration.serverPort + ErrorCodes.GENERIC_EXCEPTION.getErrorCode(),
+					e.getCause(), e.getMessage());
 		}
 	}
 }

@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.PagedList;
+import org.springframework.social.facebook.api.Post;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +42,10 @@ public class CustomerController {
 
 	@Autowired
 	Configuration configuration;
-
 	@Autowired
 	CustomerService customerService;
+	private Facebook facebook;
+	private ConnectionRepository connectionRepository;
 
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get All Customers", notes = "Returns list of customers", response = org.springframework.http.ResponseEntity.class)
@@ -47,7 +54,7 @@ public class CustomerController {
 			List<Customer> list = customerService.get();
 			if (list.isEmpty())
 				res.setStatus(HttpStatus.NOT_FOUND.value());
-			res.setStatus(HttpStatus.ACCEPTED.value());
+			res.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<>(list);
 		} catch (CustomerException e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -58,7 +65,8 @@ public class CustomerController {
 		}
 	}
 
-	@PostMapping("/")
+	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Add Customer", notes = "Add Customer", response = org.springframework.http.ResponseEntity.class)
 	public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer, HttpServletResponse res) {
 		try {
 			res.setStatus(HttpStatus.CREATED.value());
@@ -72,5 +80,34 @@ public class CustomerController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR, new AcgError(
 					configuration.serverPort + ErrorCodes.GENERIC_EXCEPTION.getErrorCode(), e.getMessage()));
 		}
+	}
+	
+	@DeleteMapping(value = "/")
+	@ApiOperation(value = "Delete All Customers", notes = "Delete All Customers", response = org.springframework.http.ResponseEntity.class)
+	public ResponseEntity<?> delete(HttpServletResponse res) {
+		try {
+			res.setStatus(HttpStatus.OK.value());
+			return new ResponseEntity<>(customerService.delete(), HttpStatus.OK);
+		} catch (CustomerException e) {
+			res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR,
+					new AcgError(e.getErrorCode(), e.getMessage()));
+		} catch (Exception e) {
+			res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR, new AcgError(
+					configuration.serverPort + ErrorCodes.GENERIC_EXCEPTION.getErrorCode(), e.getMessage()));
+		}
+	}
+
+	@GetMapping("/fb")
+	public String ff(Model model) {
+		if (connectionRepository.findPrimaryConnection(Facebook.class) == null) {
+			return "redirect:/connect/facebook";
+		}
+
+		model.addAttribute("facebookProfile", facebook.userOperations().getUserProfile());
+		PagedList<Post> feed = facebook.feedOperations().getFeed();
+		model.addAttribute("feed", feed);
+		return "hello";
 	}
 }
