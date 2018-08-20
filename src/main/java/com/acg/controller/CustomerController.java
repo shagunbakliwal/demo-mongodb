@@ -45,7 +45,12 @@ public class CustomerController {
 	@Autowired
 	CustomerService customerService;
 	private Facebook facebook;
-	private ConnectionRepository connectionRepository;
+    private ConnectionRepository connectionRepository;
+
+    public CustomerController(Facebook facebook, ConnectionRepository connectionRepository) {
+        this.facebook = facebook;
+        this.connectionRepository = connectionRepository;
+    }
 
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get All Customers", notes = "Returns list of customers", response = org.springframework.http.ResponseEntity.class)
@@ -100,7 +105,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/fb")
-	public String ff(Model model) {
+	public String facebook(Model model) {
 		if (connectionRepository.findPrimaryConnection(Facebook.class) == null) {
 			return "redirect:/connect/facebook";
 		}
